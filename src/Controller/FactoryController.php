@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Factory;
 use App\Form\FactoryType;
 use App\Service\FactoryService;
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -35,9 +37,25 @@ final class FactoryController extends AbstractController
     }
 
     #[Route("/new", "new")]
-    public function new(Request $request): Response {
-        $form = $this -> createForm(FactoryType::class);
+    public function new(Request $request, FileUploader $fileUploader): Response {
+        $factory = new Factory();
+
+        $form = $this -> createForm(FactoryType::class, $factory);
         $form -> handleRequest($request);
+
+        if ($form -> isSubmitted() && $form -> isValid()) {
+            $imageFile = $form -> get("image") -> getData();
+
+            if ($imageFile) {
+                $imageFileName = $fileUploader -> upload($imageFile);
+            }
+
+            $this -> service -> saveFactory($factory, compact("imageFile", "imageFileName"));
+
+            $this -> addFlash("status", "Factory Created Successfully");
+
+            return $this -> redirectToRoute("factory_show", ["id" => $factory -> getId()]);
+        }
 
         return $this -> render("factory/new.html.twig", compact("form"));
     }
