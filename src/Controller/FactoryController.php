@@ -48,11 +48,35 @@ final class FactoryController extends AbstractController
 
             if ($imageFile) {
                 $imageFileName = $fileUploader -> upload($imageFile);
+                $this -> service -> setFactoryImage($factory, $imageFileName);
             }
 
-            $this -> service -> saveFactory($factory, compact("imageFile", "imageFileName"));
+            $this -> service -> saveFactory($factory);
 
             $this -> addFlash("status", "Factory Created Successfully");
+
+            return $this -> redirectToRoute("factory_show", ["id" => $factory -> getId()]);
+        }
+
+        return $this -> render("factory/new.html.twig", compact("form"));
+    }
+
+    #[Route("/{id<\d+>}/edit", name: "edit")]
+    public function edit(Request $request, FileUploader $fileUploader, Factory $factory): Response {
+        $form = $this -> createForm(FactoryType::class, $factory);
+        $form -> handleRequest($request);
+
+        if ($form -> isSubmitted() && $form -> isValid()) {
+            $imageFile = $form -> get("image") -> getData();
+
+            if ($imageFile) {
+                $imageFileName = $fileUploader -> upload($imageFile);
+                $this -> service -> setFactoryImage($factory, $imageFileName);
+            }
+
+            $this -> service -> saveFactory($factory, persist: false);
+
+            $this -> addFlash("status", "Factory Updated Successfully");
 
             return $this -> redirectToRoute("factory_show", ["id" => $factory -> getId()]);
         }

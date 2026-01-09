@@ -23,12 +23,15 @@ final readonly class FactoryService
         return $factory -> getMachines();
     }
 
-    public function saveFactory(Factory $factory, array $imageData): void {
-        if ($imageData["imageFile"]) {
-            $factory -> setImage($imageData["imageFileName"]);
+    public function saveFactory(Factory $factory, bool $persist = true): void {
+        if ($persist) {
+            $this -> entityManager -> persist($factory);
         }
-        
-        $this -> entityManager -> persist($factory);
+
         $this -> entityManager -> flush();
+    }
+
+    public function setFactoryImage(Factory $factory, string $imageFileName): void {
+        $factory -> setImage($imageFileName);
     }
 }
