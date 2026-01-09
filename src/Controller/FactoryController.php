@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Factory;
+use App\Form\FactoryType;
 use App\Service\FactoryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -24,6 +26,19 @@ final class FactoryController extends AbstractController
 
     #[Route("/{id<\d+>}", name: "show")]
     public function show(Factory $factory): Response {
-        return new Response($factory -> getName());
+        $factoryMachines = $this -> service -> getMachines($factory);
+
+        return $this -> render(
+            "factory/show.html.twig", 
+            compact("factory", "factoryMachines")
+        );
+    }
+
+    #[Route("/new", "new")]
+    public function new(Request $request): Response {
+        $form = $this -> createForm(FactoryType::class);
+        $form -> handleRequest($request);
+
+        return $this -> render("factory/new.html.twig", compact("form"));
     }
 }

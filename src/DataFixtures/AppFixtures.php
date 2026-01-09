@@ -13,7 +13,7 @@ class AppFixtures extends Fixture
     {
         $factory = new Factory();
         $factory -> setName("CPU Factory");
-        $factory -> setImage("/images/IntelLogo.png");
+        $factory -> setImage("IntelLogo.png");
 
         $manager->persist($factory);
 

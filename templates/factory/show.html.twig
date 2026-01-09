@@ -1,0 +1,41 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Factory{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <img src="{{ asset('images/' ~ factory.image) }}" class="card-img-top img-fluid rounded" alt="{{ factory.name }}">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-2">{{ factory.name }}</h2>
+
+                    <h3 class="d-flex justify-content-between align-items-center mb-3">
+                        Machines
+                        <span class="badge bg-secondary">{{ factoryMachines|length }}</span>
+                    </h3>
+
+                    {% if factoryMachines|length > 0 %}
+                        <ul class="list-group mb-3">
+                            {% for machine in factoryMachines %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ machine.name }}</strong>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-info py-2">No machines yet.</div>
+                    {% endif %}
+
+                    <a href="" class="btn btn-primary btn-sm">Add Machine</a>
+
+                    <a href="{{ path('factory_index') }}" class="btn btn-secondary btn-sm">Back To List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
