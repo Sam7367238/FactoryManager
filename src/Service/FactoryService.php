@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Factory;
-use App\Entity\Machine;
 use App\Repository\FactoryRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
