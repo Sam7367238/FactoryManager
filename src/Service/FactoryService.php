@@ -33,4 +33,9 @@ final readonly class FactoryService
     public function setFactoryImage(Factory $factory, string $imageFileName): void {
         $factory -> setImage($imageFileName);
     }
+
+    public function deleteFactory(Factory $factory): void {
+        $this -> entityManager -> remove($factory);
+        $this -> entityManager -> flush();
+    }
 }

@@ -81,6 +81,19 @@ final class FactoryController extends AbstractController
             return $this -> redirectToRoute("factory_show", ["id" => $factory -> getId()]);
         }
 
-        return $this -> render("factory/new.html.twig", compact("form"));
+        return $this -> render("factory/edit.html.twig", compact("form"));
+    }
+
+    #[Route("/{id<\d+>}/delete", name: "delete")]
+    public function delete(Request $request, Factory $factory) {
+        if ($request -> isMethod("POST")) {
+            $this -> service -> deleteFactory($factory);
+
+            $this -> addFlash("status", "Factory Deleted Successfully");
+
+            return $this -> redirectToRoute("factory_index");
+        }
+
+        return $this -> render("factory/delete.html.twig", ["factoryID" => $factory -> getId()]);
     }
 }

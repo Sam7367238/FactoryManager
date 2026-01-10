@@ -1,0 +1,25 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Delete Factory{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Confirm Deletion
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Are you sure you want to delete this factory?</p>
+                    
+                    <form method="POST" class="d-flex justify-content-between">
+                        <a href="{{ path('factory_show', {id: factoryID}) }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
