@@ -8,8 +8,9 @@ applications and most of the [popular PHP projects][2].
 
 Project
 ------------
+This is a website where you can create factories, you can create independent machines or attach them to factories, those machines can be turned on or off.
 
-This is a website where you can create factories, you can add independent machines or attach them to factories, those machines can be turned on or off. SymfonyCasts wants me to feel dangerous with Symfony, I feel dangerous with it now.
+SymfonyCasts wants me to feel dangerous with Symfony, I feel dangerous with it now.
 
 License
 ------------
