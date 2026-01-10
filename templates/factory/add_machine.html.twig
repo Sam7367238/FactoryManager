@@ -1,0 +1,11 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Add Machine{% endblock %}
+
+{% block body %}
+    <ul>
+        {% for machine in machines %}
+            <li>{{ machine.name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -23,6 +23,11 @@
                                     <div>
                                         <strong>{{ machine.name }}</strong>
                                     </div>
+                                    <form method="post" action="{{ path('factory_machine_delete', {factoryId: factory.id, machineId: machine.id}) }}" style="display:inline;">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </li>
                             {% endfor %}
                         </ul>

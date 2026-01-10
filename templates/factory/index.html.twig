@@ -17,7 +17,7 @@
                         <h5 class="card-title mb-2">{{ factory.name|u.truncate(30, "...") }}</h5>
                         <div class="mt-auto d-flex gap-2">
                             <a href="{{ path('factory_show', {id: factory.id}) }}" class="btn btn-outline-primary btn-sm">View</a>
-                            <a href="" class="btn btn-outline-secondary btn-sm">Edit</a>
+                            <a href="{{ path('factory_edit', {id: factory.id}) }}" class="btn btn-outline-secondary btn-sm">Edit</a>
                         </div>
                     </div>
                 </div>
