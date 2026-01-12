@@ -35,7 +35,7 @@
                         <div class="alert alert-info py-2">No machines yet.</div>
                     {% endif %}
 
-                    <a href="" class="btn btn-primary btn-sm">Add Machine</a>
+                    <a href="{{ path('factory_machine_new', {id: factory.id}) }}" class="btn btn-primary btn-sm">Add Machine</a>
 
                     <a href="{{ path('factory_index') }}" class="btn btn-secondary btn-sm">Back To List</a>
                     <a href="{{ path('factory_edit', {id: factory.id}) }}" class="btn btn-primary btn-sm">Edit</a>

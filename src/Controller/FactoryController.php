@@ -10,7 +10,6 @@ use App\Service\FileUploader;
 use App\Service\MachineService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,7 +17,6 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route("/factory", name: "factory_")]
 final class FactoryController extends AbstractController
 {
-
     public function __construct(private FactoryService $factoryService, private MachineService $machineService) {}
 
     #[Route('/', name: 'index')]
@@ -116,7 +114,7 @@ final class FactoryController extends AbstractController
     #[Route("/{id<\d+>}/machine/new", name: "machine_new")]
     public function machineNew(Factory $factory): Response
     {
-        $machines = $this -> machineService -> findAll();
+        $machines = $this -> machineService -> getOrphanedMachines($factory);
 
         return $this -> render("factory/add_machine.html.twig", compact("machines"));
     }

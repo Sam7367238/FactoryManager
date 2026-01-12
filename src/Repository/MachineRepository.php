@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Factory;
 use App\Entity\Machine;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -40,4 +41,20 @@ class MachineRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findOrphanedMachinesForFactory(Factory $factory): array {
+        $queryBuilder = $this -> createQueryBuilder('m');
+        $expression = $queryBuilder -> expr();
+
+        $excludeQuery = $this -> createQueryBuilder('sub')
+        -> select("sub.id")
+        -> join("sub.factory", 'f')
+        -> where("f = :factory");
+
+        return $queryBuilder
+        -> where($expression-> notIn('m.id', $excludeQuery -> getDQL()))
+        -> setParameter("factory", $factory)
+        -> getQuery()
+        -> getResult();
+    }
 }
