@@ -12,8 +12,12 @@ class MachineService {
         private MachineRepository $repository
     ) {}
 
-    public function findAll() {
+    public function findAll(): array {
         return $this -> repository -> findAll();
+    }
+
+    public function findOneBy(array $criteria): object|null {
+        return $this -> repository -> findOneBy($criteria);
     }
 
     public function getOrphanedMachines(Factory $factory): mixed {

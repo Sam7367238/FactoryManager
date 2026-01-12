@@ -100,7 +100,6 @@ final class FactoryController extends AbstractController
 
     #[Route("/{factoryId<\d+>}/machine/{machineId<\d+>}/delete", name: "machine_delete", methods: ["POST"])]
     public function machineDelete(
-        Request $request, 
         #[MapEntity(id: "factoryId")] Factory $factory, 
         #[MapEntity(id:"machineId")] Machine $machine
     ): Response {
@@ -112,9 +111,20 @@ final class FactoryController extends AbstractController
     }
 
     #[Route("/{id<\d+>}/machine/new", name: "machine_new")]
-    public function machineNew(Factory $factory): Response
+    public function machineNew(Request $request, Factory $factory): Response
     {
         $machines = $this -> machineService -> getOrphanedMachines($factory);
+
+        if ($request -> isMethod("POST")) {
+            $machineId = $request -> request -> get("machineId");
+            $machine = $this -> machineService -> findOneBy(["id" => $machineId]);
+            
+            $this -> factoryService -> addMachine($machine, $factory);
+
+            $this -> addFlash("status", "Machine Added To Factory Successfully");
+
+            return $this -> redirectToRoute("factory_machine_new", ["id" => $factory -> getId()]);
+        }
 
         return $this -> render("factory/add_machine.html.twig", compact("machines"));
     }

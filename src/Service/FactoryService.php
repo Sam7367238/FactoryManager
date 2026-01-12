@@ -23,6 +23,12 @@ final readonly class FactoryService
         return $factory -> getMachines();
     }
 
+    public function addMachine(Machine $machine, Factory $factory): void {
+        $factory -> addMachine($machine);
+        
+        $this -> entityManager -> flush();
+    }
+
     public function saveFactory(Factory $factory, bool $persist = true): void {
         if ($persist) {
             $this -> entityManager -> persist($factory);

@@ -3,9 +3,28 @@
 {% block title %}Add Machine{% endblock %}
 
 {% block body %}
-    <ul>
+<div class="container my-4">
+    <h1 class="mb-4">Add Machine</h1>
+
+    {% if not machines %}
+        <div class="alert alert-info">Nothing To Add</div>
+    {% endif %}
+
+    <div class="row">
         {% for machine in machines %}
-            <li>{{ machine.name }}</li>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ machine.name }}</h5>
+                        
+                        <form method="POST" class="mt-auto">
+                            <input type="hidden" name="machineId" value="{{ machine.id }}">
+                            <button type="submit" class="btn btn-primary btn-block">Add To Factory</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+</div>
 {% endblock %}
