@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Enum\MachineStatus;
 use App\Repository\MachineRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MachineRepository::class)]
 class Machine
@@ -17,12 +17,13 @@ class Machine
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $name = null;
 
     /**
-     * @var Collection<int, factory>
+     * @var Collection<int, Factory>
      */
-    #[ORM\ManyToMany(targetEntity: factory::class, inversedBy: 'machines')]
+    #[ORM\ManyToMany(targetEntity: Factory::class, inversedBy: 'machines')]
     private Collection $factory;
 
     #[ORM\Column(length: 25)]
