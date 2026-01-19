@@ -11,8 +11,8 @@ final class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        $this -> addFlash("status", "🤫");
-        
-        return $this -> redirectToRoute("factory_index");
+        $this->addFlash('status', '🤫');
+
+        return $this->redirectToRoute('factory_index');
     }
 }

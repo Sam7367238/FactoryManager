@@ -16,15 +16,15 @@ class FactoryType extends AbstractType
         $builder
             ->add('name')
             ->add('image', FileType::class, [
-                "mapped" => false,
-                "required" => false,
-                "constraints" => [
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
                     new File(
-                        maxSize: "1024k", 
-                        extensions: ["png", "jpg", "jpeg"], 
-                        extensionsMessage: "Please upload a valid image"
-                    )
-                ]
+                        maxSize: '1024k',
+                        extensions: ['png', 'jpg', 'jpeg'],
+                        extensionsMessage: 'Please upload a valid image'
+                    ),
+                ],
             ])
         ;
     }

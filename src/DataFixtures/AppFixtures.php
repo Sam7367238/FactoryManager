@@ -12,22 +12,22 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $factory = new Factory();
-        $factory -> setName("CPU Factory");
-        $factory -> setImage("IntelLogo.png");
+        $factory->setName('CPU Factory');
+        $factory->setImage('IntelLogo.png');
 
         $manager->persist($factory);
 
         $machine = new Machine();
-        $machine -> setName("CPU Constructor");
-        $machine -> addFactory($factory);
-        $machine -> setStatus("ON");
+        $machine->setName('CPU Constructor');
+        $machine->addFactory($factory);
+        $machine->setStatus('ON');
 
         $manager->persist($machine);
-        
+
         $machine = new Machine();
-        $machine -> setName(name: "Benchmarker");
-        $machine -> addFactory($factory);
-        $machine -> setStatus("ON");
+        $machine->setName(name: 'Benchmarker');
+        $machine->addFactory($factory);
+        $machine->setStatus('ON');
 
         $manager->persist($machine);
 

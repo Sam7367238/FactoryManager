@@ -12,7 +12,7 @@ class MachineType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('name') -> add("Save", SubmitType::class);
+        $builder->add('name')->add('Save', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
