@@ -5,9 +5,10 @@ namespace App\Controller;
 use App\Entity\Factory;
 use App\Entity\Machine;
 use App\Form\FactoryType;
-use App\Service\FactoryService;
-use App\Service\FileUploader;
-use App\Service\MachineService;
+use App\Repository\FactoryRepository;
+use App\Repository\MachineRepository;
+use App\Service\FileUploaderService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,14 +18,17 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/factory', name: 'factory_')]
 final class FactoryController extends AbstractController
 {
-    public function __construct(private FactoryService $factoryService, private MachineService $machineService)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private FactoryRepository $factoryRepository,
+        private MachineRepository $machineRepository,
+    ) {
     }
 
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        $factories = $this->factoryService->findAll();
+        $factories = $this->factoryRepository->findAll();
 
         return $this->render('factory/index.html.twig', compact('factories'));
     }
@@ -32,7 +36,7 @@ final class FactoryController extends AbstractController
     #[Route("/{id<\d+>}", name: 'show')]
     public function show(Factory $factory): Response
     {
-        $factoryMachines = $this->factoryService->getMachines($factory);
+        $factoryMachines = $factory->getMachines();
 
         return $this->render(
             'factory/show.html.twig',
@@ -41,7 +45,7 @@ final class FactoryController extends AbstractController
     }
 
     #[Route('/new', 'new')]
-    public function new(Request $request, FileUploader $fileUploader): Response
+    public function new(Request $request, FileUploaderService $fileUploader): Response
     {
         $factory = new Factory();
 
@@ -53,10 +57,11 @@ final class FactoryController extends AbstractController
 
             if ($imageFile) {
                 $imageFileName = $fileUploader->upload($imageFile);
-                $this->factoryService->setFactoryImage($factory, $imageFileName);
+                $factory->setImage($imageFileName);
             }
 
-            $this->factoryService->saveFactory($factory);
+            $this->entityManager->persist($factory);
+            $this->entityManager->flush();
 
             $this->addFlash('status', 'Factory Created Successfully');
 
@@ -67,7 +72,7 @@ final class FactoryController extends AbstractController
     }
 
     #[Route("/{id<\d+>}/edit", name: 'edit')]
-    public function edit(Request $request, FileUploader $fileUploader, Factory $factory): Response
+    public function edit(Request $request, FileUploaderService $fileUploader, Factory $factory): Response
     {
         $form = $this->createForm(FactoryType::class, $factory);
         $form->handleRequest($request);
@@ -77,10 +82,10 @@ final class FactoryController extends AbstractController
 
             if ($imageFile) {
                 $imageFileName = $fileUploader->upload($imageFile);
-                $this->factoryService->setFactoryImage($factory, $imageFileName);
+                $factory->setImage($imageFileName);
             }
 
-            $this->factoryService->saveFactory($factory, persist: false);
+            $this->entityManager->flush();
 
             $this->addFlash('status', 'Factory Updated Successfully');
 
@@ -94,7 +99,7 @@ final class FactoryController extends AbstractController
     public function delete(Request $request, Factory $factory): Response
     {
         if ($request->isMethod('POST')) {
-            $this->factoryService->deleteFactory($factory);
+            $this->entityManager->remove($factory);
 
             $this->addFlash('status', 'Factory Deleted Successfully');
 
@@ -109,29 +114,51 @@ final class FactoryController extends AbstractController
         #[MapEntity(id: 'factoryId')] Factory $factory,
         #[MapEntity(id: 'machineId')] Machine $machine,
     ): Response {
-        $this->factoryService->deleteFactoryMachine($factory, $machine);
+        $factory->removeMachine($machine);
+        $this->entityManager->flush();
 
         $this->addFlash('status', 'Machine Has Been Removed From Factory Successfully');
 
         return $this->redirectToRoute('factory_show', ['id' => $factory->getId()]);
     }
 
-    #[Route("/{id<\d+>}/machine/new", name: 'machine_new')]
-    public function machineNew(Request $request, Factory $factory): Response
+    #[Route("/{id<\d+>}/machine/add", name: 'machine_add', methods: 'GET')]
+    public function machineAdd(Request $request, Factory $factory): Response
     {
-        $machines = $this->machineService->getOrphanedMachines($factory);
-
-        if ($request->isMethod('POST')) {
-            $machineId = $request->request->get('machineId');
-            $machine = $this->machineService->findOneBy(['id' => $machineId]);
-
-            $this->factoryService->addMachine($machine, $factory);
-
-            $this->addFlash('status', 'Machine Added To Factory Successfully');
-
-            return $this->redirectToRoute('factory_machine_new', ['id' => $factory->getId()]);
-        }
+        $machines = $this->machineRepository->findOrphanedMachinesForFactory($factory);
 
         return $this->render('factory/add_machine.html.twig', compact('machines'));
+    }
+
+    #[Route("/{id<\d+>}/machine/add", name: 'machine_new', methods: 'POST')]
+    public function machineNew(Request $request, Factory $factory): Response
+    {
+        $machineId = $request->request->get('machineId');
+
+        if (!$this->machineRepository->find($machineId)) {
+            return throw $this->createNotFoundException();
+        }
+
+        $machine = $this->machineRepository->find($machineId);
+
+        $machines = $factory->getMachines();
+
+        $contains = $machines->contains($machine);
+
+        if ($contains) {
+            $this->addFlash('status', 'Machine Is Already Part Of The Factory');
+
+            return $this->redirectToRoute('factory_machine_add', ['id' => $factory->getId()]);
+        }
+
+        $machine = $this->machineRepository->find($machineId);
+
+        $factory->addMachine($machine);
+
+        $this->entityManager->flush();
+
+        $this->addFlash('status', 'Machine Added To Factory Successfully');
+
+        return $this->redirectToRoute('factory_machine_add', ['id' => $factory->getId()]);
     }
 }

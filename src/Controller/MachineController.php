@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Machine;
 use App\Form\MachineType;
-use App\Service\MachineService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/machine', name: 'machine_')]
 final class MachineController extends AbstractController
 {
-    public function __construct(private MachineService $service)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
     }
 
@@ -26,9 +26,9 @@ final class MachineController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->service->setStatus($machine, 'ON');
+            $machine->setStatus('ON');
 
-            $this->service->persist($machine);
+            $this->entityManager->persist($machine);
 
             $this->addFlash('status', 'Machine Created Successfully');
 
