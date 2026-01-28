@@ -29,6 +29,7 @@ final class MachineController extends AbstractController
             $machine->setStatus('ON');
 
             $this->entityManager->persist($machine);
+            $this->entityManager->flush();
 
             $this->addFlash('status', 'Machine Created Successfully');
 
